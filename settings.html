@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OmniFlow — Settings</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+    }
+
+    .settings-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .settings-nav-item {
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .settings-nav-item:hover {
+      background: var(--border);
+    }
+
+    .settings-nav-item.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .settings-panel {
+      display: none;
+    }
+
+    .settings-panel.active {
+      display: block;
+    }
+
+    .settings-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .settings-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .settings-section-sub {
+      font-size: 12.5px;
+      color: var(--ink-3);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+      margin-bottom: 5px;
+    }
+
+    input[type=text],
+    input[type=email],
+    input[type=password],
+    select.full {
+      width: 100%;
+      max-width: 400px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    input:focus,
+    select.full:focus {
+      border-color: var(--blue);
+      background: var(--surface);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .btn {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #265fd4;
+    }
+
+    .btn-danger {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .toggle-sub {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    .toggle {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked+.toggle-slider {
+      background: var(--blue);
+    }
+
+    .toggle input:checked+.toggle-slider::before {
+      transform: translateX(16px);
+    }
+
+    .user-table-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .user-table-row:last-child {
+      border-bottom: none;
+    }
+
+    .user-avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue-soft);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-info-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .user-info-email {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    .role-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      </div>
+      <span class="logo-text">Omni<span>Flow</span></span>
+    </div>
+    <nav>
+      <div class="nav-label">Main</div>
+      <a class="nav-item" href="home.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>Home</a>
+      <a class="nav-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>Dashboard</a>
+      <div class="nav-divider"></div>
+      <div class="nav-label">Operations</div>
+      <a class="nav-item" href="orders.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>Order Management</a>
+      <a class="nav-item" href="clients.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+        </svg>Client List</a>
+      <a class="nav-item" href="production.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>Production</a>
+      <a class="nav-item" href="inventory.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+        </svg>Inventory</a>
+      <div class="nav-divider"></div>
+      <div class="nav-label">Insights</div>
+      <a class="nav-item" href="reports.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10" />
+          <line x1="12" y1="20" x2="12" y2="4" />
+          <line x1="6" y1="20" x2="6" y2="14" />
+        </svg>Reports</a>
+      <div class="nav-divider"></div>
+      <a class="nav-item active" href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+        </svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar" id="user-avatar"></div>
+      <div>
+        <div class="user-name" id="user-name">—</div>
+        <div class="user-role" id="user-role">—</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <span class="topbar-title">Settings</span>
+    </header>
+
+    <main class="content">
+      <div class="page-header">
+        <div class="page-title">Settings</div>
+        <div class="page-sub">Manage your shop, account, and preferences</div>
+      </div>
+
+      <div class="settings-layout">
+
+        <!-- Settings Nav -->
+        <div class="settings-nav">
+          <div class="settings-nav-item active" onclick="showPanel('shop')">Shop Profile</div>
+          <div class="settings-nav-item" onclick="showPanel('account')">My Account</div>
+          <div class="settings-nav-item" onclick="showPanel('users')">Users & Roles</div>
+          <div class="settings-nav-item" onclick="showPanel('notifications')">Notifications</div>
+        </div>
+
+        <!-- Shop Profile Panel -->
+        <div class="settings-panel active" id="panel-shop">
+          <div class="settings-section">
+            <div class="settings-section-title">Shop Profile</div>
+            <div class="settings-section-sub">Basic info about your workshop — from /api/settings/shop</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Shop Name</label>
+                <!-- {{ shop.name }} -->
+                <input type="text" id="shop-name" placeholder="Loading…" />
+              </div>
+              <div class="form-group">
+                <label>Industry</label>
+                <input type="text" id="shop-industry" placeholder="e.g. Metal Fabrication" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Address</label>
+              <input type="text" id="shop-address" placeholder="Loading…" />
+            </div>
+            <div class="form-group">
+              <label>Contact Email</label>
+              <input type="email" id="shop-email" placeholder="Loading…" />
+            </div>
+            <button class="btn btn-primary" onclick="saveShop()">Save Changes</button>
+          </div>
+        </div>
+
+        <!-- My Account Panel -->
+        <div class="settings-panel" id="panel-account">
+          <div class="settings-section">
+            <div class="settings-section-title">My Account</div>
+            <div class="settings-section-sub">Update your personal info — from /api/settings/me</div>
+            <div class="form-group">
+              <label>Full Name</label>
+              <!-- {{ current_user.name }} -->
+              <input type="text" id="acc-name" placeholder="Loading…" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="acc-email" placeholder="Loading…" />
+            </div>
+            <button class="btn btn-primary" onclick="saveAccount()">Save Changes</button>
+          </div>
+          <div class="settings-section">
+            <div class="settings-section-title">Change Password</div>
+            <div class="settings-section-sub">Leave blank to keep your current password</div>
+            <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••" />
+            </div>
+            <div class="form-group"><label>New Password</label><input type="password" placeholder="••••••••" /></div>
+            <div class="form-group"><label>Confirm New Password</label><input type="password" placeholder="••••••••" />
+            </div>
+            <button class="btn btn-primary">Update Password</button>
+          </div>
+        </div>
+
+        <!-- Users Panel -->
+        <div class="settings-panel" id="panel-users">
+          <div class="settings-section">
+            <div class="settings-section-title">Users & Roles</div>
+            <div class="settings-section-sub">All admin users — from /api/settings/users</div>
+            <div id="users-list">
+              <!-- Populated from /api/settings/users -->
+              <div class="empty">Loading users…</div>
+            </div>
+            <br />
+            <button class="btn btn-primary" onclick="inviteUser()">+ Invite User</button>
+          </div>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div class="settings-panel" id="panel-notifications">
+          <div class="settings-section">
+            <div class="settings-section-title">Notification Preferences</div>
+            <div class="settings-section-sub">Choose what alerts you receive — saved to /api/settings/notifications
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Low Stock Alerts</div>
+                <div class="toggle-sub">Notify when inventory falls below minimum</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="saveNotifPref()" /><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Overdue Orders</div>
+                <div class="toggle-sub">Notify when an order passes its due date</div>
+              </div>
+              <label class="toggle"><input type="checkbox" checked onchange="saveNotifPref()" /><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">New Order Added</div>
+                <div class="toggle-sub">Notify when a new order is created</div>
+              </div>
+              <label class="toggle"><input type="checkbox" onchange="saveNotifPref()" /><span
+                  class="toggle-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Order Completed</div>
+                <div class="toggle-sub">Notify when an order is marked done</div>
+              </div>
+              <label class="toggle"><input type="checkbox" onchange="saveNotifPref()" /><span
+                  class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function showPanel(id) {
+      document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function saveShop() {
+      const payload = {
+        name: document.getElementById('shop-name').value,
+        industry: document.getElementById('shop-industry').value,
+        address: document.getElementById('shop-address').value,
+        email: document.getElementById('shop-email').value,
+      };
+      fetch('/api/settings/shop', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+        .then(r => r.json())
+        .then(() => alert('Shop profile saved'));
+    }
+
+    function saveAccount() {
+      const payload = { name: document.getElementById('acc-name').value, email: document.getElementById('acc-email').value };
+      fetch('/api/me', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+        .then(r => r.json())
+        .then(me => { alert('Account updated'); loadSidebarUserData(me); });
+    }
+
+    function saveNotifPref() {
+      // collect toggles here if backend added later
+    }
+
+    function initials(name) { return (name || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase(); }
+
+    function loadShop() {
+      fetch('/api/settings/shop')
+        .then(r => r.json())
+        .then(d => {
+          document.getElementById('shop-name').value    = d.name || '';
+          document.getElementById('shop-address').value = d.address || '';
+          document.getElementById('shop-email').value   = d.email || '';
+          document.getElementById('shop-industry').value= d.industry || '';
+        });
+    }
+
+    function loadAccount() {
+      fetch('/api/me')
+        .then(r => r.json())
+        .then(me => {
+          document.getElementById('acc-name').value  = me.name || '';
+          document.getElementById('acc-email').value = (me.email || '');
+        });
+    }
+
+    function loadUsers() {
+      fetch('/api/settings/users')
+        .then(r => r.json())
+        .then(users => {
+          const usersList = document.getElementById('users-list');
+          if (!users.length) {
+            usersList.innerHTML = '<div class="empty">No users yet.</div>';
+            return;
+          }
+          usersList.innerHTML = users.map(u => `
+            <div class="user-table-row">
+              <div class="user-avatar-sm">${initials(u.name)}</div>
+              <div class="user-info">
+                <div class="user-info-name">${u.name}</div>
+                <div class="user-info-email">${u.email}</div>
+              </div>
+              <span class="role-badge">${u.role}</span>
+            </div>`).join('');
+        })
+        .catch(() => {
+          document.getElementById('users-list').innerHTML = '<div class="empty">Unable to load users.</div>';
+        });
+    }
+
+    function inviteUser() {
+      const name = prompt('User name'); if (!name) return;
+      const email = prompt('User email'); if (!email) return;
+      const role = prompt('Role (e.g. Manager, Member)', 'Member') || 'Member';
+      fetch('/api/settings/users', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ name, email, role })
+      }).then(() => loadUsers());
+    }
+
+    function loadSettings() {
+      loadShop();
+      loadAccount();
+      loadUsers();
+    }
+
+    loadSettings();
+
+    function loadSidebarUserData(me) {
+      if (!me) { fetch('/api/me').then(r => r.json()).then(loadSidebarUserData); return; }
+      const n = document.getElementById('user-name');
+      const ro = document.getElementById('user-role');
+      const av = document.getElementById('user-avatar');
+      if (n) n.textContent = me.name || '—';
+      if (ro) ro.textContent = me.role || '—';
+      if (av) av.textContent = (me.name || '—').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    }
+
+    // Set sidebar user
+    (function loadUser() {
+      fetch('/api/me').then(r => r.json()).then(me => {
+        const n = document.getElementById('user-name');
+        const ro = document.getElementById('user-role');
+        const av = document.getElementById('user-avatar');
+        if (n) n.textContent = me.name || '—';
+        if (ro) ro.textContent = me.role || '—';
+        if (av) av.textContent = (me.name || '—').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      });
+    })();
+
+    function logout() {
+      fetch('/api/logout', { method: 'POST' }).then(() => window.location = '/login');
+    }
+  </script>
+</body>
+
+</html>
